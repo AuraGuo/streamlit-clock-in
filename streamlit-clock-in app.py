@@ -106,12 +106,12 @@ if records:
     header6.markdown("**操作**")
     
     for i, row in df.iterrows():
-        col1, col2, col3, col4, col5 = st.columns([2, 2, 2, 2, 1])
-        col1.write(row["name"])
-        col2.write(row["date"])
-        col3.write(row["time"])
-        col4.write(row["action"])
-        col5.write(row.get("note", ""))  # 若備註不存在則顯示空白
+        col1, col2, col3, col4, col5, col6 = st.columns([2, 2, 2, 2, 2, 1])
+        col1.markdown(f"<div style='text-align: left'>{row['name']}</div>", unsafe_allow_html=True)
+        col2.markdown(f"<div style='text-align: left'>{row['date']}</div>", unsafe_allow_html=True)
+        col3.markdown(f"<div style='text-align: left'>{row['time']}</div>", unsafe_allow_html=True)
+        col4.markdown(f"<div style='text-align: left'>{row['action']}</div>", unsafe_allow_html=True)
+        col5.markdown(f"<div style='text-align: left'>{row.get('note', '')}</div>", unsafe_allow_html=True)
         with col6:
             if st.button("刪除", key=f"delete_{i}"):
                 st.session_state["delete_index"] = i
