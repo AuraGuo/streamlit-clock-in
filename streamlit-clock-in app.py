@@ -25,18 +25,24 @@ with open(RECORD_FILE, "r", encoding="utf-8") as f:
     records = json.load(f)
 
 # 打卡動作
-def save_record(action):
+def save_record(name, action, date=None, time=None):
     now = get_now()
+    record_date = date if date else now.strftime("%Y-%m-%d")
+    record_time = time if time else now.strftime("%H:%M:%S")
+
+    note = "手動新增" if action == "手動新增" else ""
+
     new_record = {
-        "name": DEFAULT_NAME,
-        "date": now.strftime("%Y-%m-%d"),
-        "time": now.strftime("%H:%M:%S"),
+        "name": name,
+        "date": record_date,
+        "time": record_time,
         "action": action,
+        "note": note
     }
     records.insert(0, new_record)
     with open(RECORD_FILE, "w", encoding="utf-8") as f:
         json.dump(records, f, ensure_ascii=False, indent=2)
-    st.success(f"{action} 成功於 {new_record['date']} {new_record['time']}")
+    st.success(f"{name} {action} 成功於 {record_date} {record_time}")
     st.rerun()
 
 
@@ -47,10 +53,27 @@ st.markdown(f"☺ 使用者：**{DEFAULT_NAME}**")
 
 
 with st.form("打卡表單", clear_on_submit=True):
-    action = st.selectbox("請選擇打卡類型", ["上班", "下班"])
+    action = st.selectbox("請選擇打卡類型",  ["上班", "下班", "手動新增"])
+    
+    # 新增手動選擇時間
+    manual_date = None
+    manual_time = None
+    if action == "手動新增":
+        col1, col2 = st.columns(2)
+        manual_date = col1.date_input("選擇日期")
+        manual_time = col2.time_input("選擇時間")
+        
     submitted = st.form_submit_button("打卡！")
     if submitted:
-        save_record(action)
+    if action == "手動新增" and (manual_date is None or manual_time is None):
+        st.warning("請選擇日期與時間")
+    else:
+        save_record(
+            DEFAULT_NAME,
+            action,
+            manual_date.strftime("%Y-%m-%d") if manual_date else None,
+            manual_time.strftime("%H:%M:%S") if manual_time else None
+        )
 
 # 顯示紀錄
 st.divider()
@@ -70,13 +93,26 @@ DELETE_PASSWORD = "0000"  # 密碼可自行更換
 
 if records:
     df = pd.DataFrame(records)
+
+    st.markdown("### 打卡紀錄")  # 表格標題
+
+    # 加上表頭欄位
+    header1, header2, header3, header4, header5, header6 = st.columns([2, 2, 2, 2, 2, 1])
+    header1.markdown("**姓名**")
+    header2.markdown("**日期**")
+    header3.markdown("**時間**")
+    header4.markdown("**類型**")
+    header5.markdown("**備註**")
+    header6.markdown("**操作**")
+    
     for i, row in df.iterrows():
         col1, col2, col3, col4, col5 = st.columns([2, 2, 2, 2, 1])
         col1.write(row["name"])
         col2.write(row["date"])
         col3.write(row["time"])
         col4.write(row["action"])
-        with col5:
+        col5.write(row.get("note", ""))  # 若備註不存在則顯示空白
+        with col6:
             if st.button("刪除", key=f"delete_{i}"):
                 st.session_state["delete_index"] = i
 
