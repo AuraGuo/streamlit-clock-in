@@ -97,7 +97,7 @@ if records:
     st.markdown("### 打卡紀錄")  # 表格標題
 
     # 加上表頭欄位
-    header1, header2, header3, header4, header5, header6 = st.columns([2, 2, 2, 2, 2, 1])
+    header1, header2, header3, header4, header5, header6 = st.columns([2, 2, 2, 2, 2, 2])
     header1.markdown("**姓名**")
     header2.markdown("**日期**")
     header3.markdown("**時間**")
@@ -106,7 +106,7 @@ if records:
     header6.markdown("**操作**")
     
     for i, row in df.iterrows():
-        col1, col2, col3, col4, col5, col6 = st.columns([2, 2, 2, 2, 2, 1])
+        col1, col2, col3, col4, col5, col6 = st.columns([2, 2, 2, 2, 2, 2])
         col1.markdown(f"<div style='text-align: left'>{row['name']}</div>", unsafe_allow_html=True)
         col2.markdown(f"<div style='text-align: left'>{row['date']}</div>", unsafe_allow_html=True)
         col3.markdown(f"<div style='text-align: left'>{row['time']}</div>", unsafe_allow_html=True)
