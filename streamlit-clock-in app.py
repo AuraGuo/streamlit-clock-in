@@ -26,7 +26,7 @@ with open(RECORD_FILE, "r", encoding="utf-8") as f:
 
 # 打卡動作
 def save_record(action):
-    now = get.now()
+    now = get_now()
     new_record = {
         "name": DEFAULT_NAME,
         "date": now.strftime("%Y-%m-%d"),
