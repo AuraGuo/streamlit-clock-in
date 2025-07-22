@@ -48,33 +48,36 @@ def delete_record(index):
         st.success("已刪除一筆紀錄")
         st.rerun()
 
-DELETE_PASSWORD = "Aura"  # 你可以自行設定密碼
-
-st.subheader("✉ 打卡紀錄")
+DELETE_PASSWORD = "0000"  # 密碼可自行更換
 
 if records:
-    for i, r in enumerate(records):
-        col1, col2 = st.columns([5, 1])
-        with col1:
-            st.write(f"{r['date']} {r['time']} - {r['action']}")
-        with col2:
+    df = pd.DataFrame(records)
+    for i, row in df.iterrows():
+        col1, col2, col3, col4, col5 = st.columns([2, 2, 2, 2, 1])
+        col1.write(row["name"])
+        col2.write(row["date"])
+        col3.write(row["time"])
+        col4.write(row["action"])
+        with col5:
             if st.button("刪除", key=f"delete_{i}"):
                 st.session_state["delete_index"] = i
 
+    # 刪除密碼欄位顯示與處理邏輯
     if "delete_index" in st.session_state:
-        st.warning("⚠️ 這筆資料即將被刪除")
+        st.warning(f"⚠️ 確認刪除第 {st.session_state['delete_index']+1} 筆資料")
         password = st.text_input("請輸入刪除密碼", type="password")
         if st.button("確認刪除"):
             if password == DELETE_PASSWORD:
                 del records[st.session_state["delete_index"]]
                 with open(RECORD_FILE, "w", encoding="utf-8") as f:
                     json.dump(records, f, ensure_ascii=False, indent=2)
-                st.success("已刪除資料！")
+                st.success("✅ 已刪除資料")
                 del st.session_state["delete_index"]
                 st.rerun()
             else:
-                st.error("密碼錯誤")
-
+                st.error("❌ 密碼錯誤")
+else:
+    st.info("目前尚無紀錄")
 
 
 # 表單
