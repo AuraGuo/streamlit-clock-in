@@ -9,7 +9,7 @@ import pandas as pd
 st.set_page_config(page_title="簡易打卡系統", layout="centered")
 
 RECORD_FILE = "clock_records.json"
-DEFAULT_NAME = "Aura"  # 你的名字固定寫這
+DEFAULT_NAME = "Aura"  # 名字固定寫這
 
 # 初始化
 if not os.path.exists(RECORD_FILE):
