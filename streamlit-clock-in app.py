@@ -1,3 +1,5 @@
+from datetime import datetime
+import pytz
 import streamlit as st
 import json
 import os
@@ -14,13 +16,17 @@ if not os.path.exists(RECORD_FILE):
     with open(RECORD_FILE, "w", encoding="utf-8") as f:
         json.dump([], f)
 
+def get_now():
+    tz = pytz.timezone("Asia/Taipei")
+    return datetime.now(tz)
+
 # 讀取紀錄
 with open(RECORD_FILE, "r", encoding="utf-8") as f:
     records = json.load(f)
 
 # 打卡動作
 def save_record(action):
-    now = datetime.now()
+    now = get.now()
     new_record = {
         "name": DEFAULT_NAME,
         "date": now.strftime("%Y-%m-%d"),
@@ -41,6 +47,25 @@ def delete_record(index):
             json.dump(records, f, ensure_ascii=False, indent=2)
         st.success("已刪除一筆紀錄")
         st.rerun()
+
+# 預設密碼
+DELETE_PASSWORD = "aura"
+
+# 顯示紀錄與刪除按鈕
+for i, record in enumerate(records):
+    st.write(f"{record['date']} {record['time']} - {record['action']}")
+    with st.expander("刪除？"):
+        pwd = st.text_input(f"請輸入刪除密碼（記錄 {i+1}）", type="password", key=f"pwd_{i}")
+        if st.button("確認刪除", key=f"del_{i}"):
+            if pwd == DELETE_PASSWORD:
+                records.pop(i)
+                with open(RECORD_FILE, "w", encoding="utf-8") as f:
+                    json.dump(records, f, ensure_ascii=False, indent=2)
+                st.success("已刪除")
+                st.rerun()
+            else:
+                st.error("密碼錯誤")
+
 
 # 表單
 st.title("☁ 簡易打卡系統")
