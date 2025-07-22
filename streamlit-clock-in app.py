@@ -39,6 +39,24 @@ def save_record(action):
     st.success(f"{action} 成功於 {new_record['date']} {new_record['time']}")
     st.rerun()
 
+
+
+# 表單
+st.title("☁ 簡易打卡系統")
+st.markdown(f"☺ 使用者：**{DEFAULT_NAME}**")
+
+
+with st.form("打卡表單", clear_on_submit=True):
+    action = st.selectbox("請選擇打卡類型", ["上班", "下班"])
+    submitted = st.form_submit_button("打卡！")
+    if submitted:
+        save_record(action)
+
+# 顯示紀錄
+st.divider()
+st.subheader("✉ 打卡紀錄")
+
+
 # 刪除紀錄
 def delete_record(index):
     if 0 <= index < len(records):
@@ -76,33 +94,5 @@ if records:
                 st.rerun()
             else:
                 st.error("❌ 密碼錯誤")
-else:
-    st.info("目前尚無紀錄")
-
-
-# 表單
-st.title("☁ 簡易打卡系統")
-st.markdown(f"☺ 使用者：**{DEFAULT_NAME}**")
-
-
-with st.form("打卡表單", clear_on_submit=True):
-    action = st.selectbox("請選擇打卡類型", ["上班", "下班"])
-    submitted = st.form_submit_button("打卡！")
-    if submitted:
-        save_record(action)
-
-# 顯示紀錄
-st.divider()
-st.subheader("✉ 打卡紀錄")
-
-if records:
-    for idx, record in enumerate(records):
-        col1, col2, col3, col4, col5 = st.columns([2, 3, 2, 2, 1])
-        col1.write(record["name"])
-        col2.write(record["date"])
-        col3.write(record["time"])
-        col4.write(record["action"])
-        if col5.button("刪除", key=f"del-{idx}"):
-            delete_record(idx)
 else:
     st.info("目前尚無紀錄")
