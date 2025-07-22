@@ -53,19 +53,21 @@ st.markdown(f"☺ 使用者：**{DEFAULT_NAME}**")
 
 
 with st.form("打卡表單", clear_on_submit=True):
-    action = st.selectbox("請選擇打卡類型",  ["上班", "下班", "手動新增"])
+    mode = st.selectbox("請選擇操作模式", ["即時打卡", "手動新增"])
     
-    # 新增手動選擇時間
+    action = st.selectbox("打卡類型", ["上班", "下班"])
+
     manual_date = None
     manual_time = None
-    if action == "手動新增":
+    
+    if mode == "手動新增":
         col1, col2 = st.columns(2)
         manual_date = col1.date_input("選擇日期")
         manual_time = col2.time_input("選擇時間")
-        
+
     submitted = st.form_submit_button("打卡！")
     if submitted:
-        if action == "手動新增" and (manual_date is None or manual_time is None):
+        if mode == "手動新增" and (manual_date is None or manual_time is None):
             st.warning("請選擇日期與時間")
         else:
             save_record(
