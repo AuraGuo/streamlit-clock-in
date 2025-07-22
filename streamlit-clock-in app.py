@@ -25,12 +25,12 @@ with open(RECORD_FILE, "r", encoding="utf-8") as f:
     records = json.load(f)
 
 # 打卡動作
-def save_record(name, action, date=None, time=None):
+def save_record(name, action, date=None, time=None, is_manual=False):
     now = get_now()
     record_date = date if date else now.strftime("%Y-%m-%d")
     record_time = time if time else now.strftime("%H:%M:%S")
 
-    note = "手動新增" if action == "手動新增" else ""
+    note = "手動新增" if is_manual else ""
 
     new_record = {
         "name": name,
