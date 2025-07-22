@@ -66,16 +66,18 @@ with st.form("打卡表單", clear_on_submit=True):
         manual_time = col2.time_input("選擇時間")
 
     submitted = st.form_submit_button("打卡！")
-    if submitted:
-        if mode == "手動新增" and (manual_date is None or manual_time is None):
-            st.warning("請選擇日期與時間")
-        else:
-            save_record(
-                DEFAULT_NAME,
-                action,
-                manual_date.strftime("%Y-%m-%d") if manual_date else None,
-                manual_time.strftime("%H:%M:%S") if manual_time else None
-            )
+if submitted:
+    is_manual = mode == "手動新增"
+    if is_manual and (manual_date is None or manual_time is None):
+        st.warning("請選擇日期與時間")
+    else:
+        save_record(
+            DEFAULT_NAME,
+            action,
+            manual_date.strftime("%Y-%m-%d") if manual_date else None,
+            manual_time.strftime("%H:%M:%S") if manual_time else None,
+            is_manual=is_manual
+        )
 
 # 顯示紀錄
 st.divider()
