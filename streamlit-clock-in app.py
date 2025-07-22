@@ -98,7 +98,7 @@ DELETE_PASSWORD = "0000"  # 密碼可自行更換
 if records:
     df = pd.DataFrame(records)
 
-    st.markdown("### 打卡紀錄")  # 表格標題
+    #st.markdown("### 打卡紀錄")  # 表格標題
 
     # 加上表頭欄位
     header1, header2, header3, header4, header5, header6 = st.columns([2, 2, 2, 2, 2, 2])
