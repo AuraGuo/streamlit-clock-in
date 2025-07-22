@@ -48,23 +48,33 @@ def delete_record(index):
         st.success("已刪除一筆紀錄")
         st.rerun()
 
-# 預設密碼
-DELETE_PASSWORD = "aura"
+DELETE_PASSWORD = "Aura"  # 你可以自行設定密碼
 
-# 顯示紀錄與刪除按鈕
-for i, record in enumerate(records):
-    st.write(f"{record['date']} {record['time']} - {record['action']}")
-    with st.expander("刪除？"):
-        pwd = st.text_input(f"請輸入刪除密碼（記錄 {i+1}）", type="password", key=f"pwd_{i}")
-        if st.button("確認刪除", key=f"del_{i}"):
-            if pwd == DELETE_PASSWORD:
-                records.pop(i)
+st.subheader("✉ 打卡紀錄")
+
+if records:
+    for i, r in enumerate(records):
+        col1, col2 = st.columns([5, 1])
+        with col1:
+            st.write(f"{r['date']} {r['time']} - {r['action']}")
+        with col2:
+            if st.button("刪除", key=f"delete_{i}"):
+                st.session_state["delete_index"] = i
+
+    if "delete_index" in st.session_state:
+        st.warning("⚠️ 這筆資料即將被刪除")
+        password = st.text_input("請輸入刪除密碼", type="password")
+        if st.button("確認刪除"):
+            if password == DELETE_PASSWORD:
+                del records[st.session_state["delete_index"]]
                 with open(RECORD_FILE, "w", encoding="utf-8") as f:
                     json.dump(records, f, ensure_ascii=False, indent=2)
-                st.success("已刪除")
+                st.success("已刪除資料！")
+                del st.session_state["delete_index"]
                 st.rerun()
             else:
                 st.error("密碼錯誤")
+
 
 
 # 表單
